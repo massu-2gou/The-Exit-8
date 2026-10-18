@@ -76,7 +76,7 @@ const POSTERS = [
 ];
 
 // 正しいポスターが出る割合（0.5 = 半々）
-const OK_RATE = 0.5;
+const OK_RATE = 0.3;
 
 // 何回連続で正解したらクリアか
 const GOAL = 8;
