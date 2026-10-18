@@ -64,7 +64,62 @@ const POSTERS = [
     errors: [
       { wrong: "ﾛｶ", right: "ｶﾛ" }
     ]
-  }
+  },
+    //*****ペットショップ*****
+  {
+    id: "pet_ok_01",
+    image: "images/pet_ok_01.png",
+    correct: true
+  },
+  {
+    id: "pet_ng_01",
+    image: "images/pet_ng_01.png",
+    correct: false,
+    errors: [
+      { wrong: "回転", right: "開店" }
+    ]
+  }, 
+  {
+    id: "pet_ng_02",
+    image: "images/pet_ng_02.png",
+    correct: false,
+    errors: [
+      { wrong: "短かい", right: "短い" }
+    ]
+  },
+    {
+    id: "pet_ng_03",
+    image: "images/pet_ng_03.png",
+    correct: false,
+    errors: [
+      { wrong: "「初」の部首", right: "初回" }
+    ]
+  },
+    {
+    id: "pet_ng_04",
+    image: "images/pet_ng_04.png",
+    correct: false,
+    errors: [
+      { wrong: "「達」の書き方", right: "ワンちゃん達" }
+    ]
+  },
+    {
+    id: "pet_ng_05",
+    image: "images/pet_ng_05.png",
+    correct: false,
+    errors: [
+      { wrong: "感心がある", right: "関心がある" }
+    ]
+  },
+  
+    {
+    id: "pet_ng_06",
+    image: "images/pet_ng_06.png",
+    correct: false,
+    errors: [
+      { wrong: "「械」の右上に点がない", right: "機械" }
+    ]
+  },
   
   // 文字だけのポスターも追加できます（画像は不要）
   // ,{
