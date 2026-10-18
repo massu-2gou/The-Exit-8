@@ -4,6 +4,7 @@
 // errors         … 解説に出す「誤」と「正」の組（いくつでも書けます）
 
 const POSTERS = [
+  //*****ゴルフ*****
   {
     id: "golf_ok_01",
     image: "images/golf_ok_01.png",
@@ -25,8 +26,46 @@ const POSTERS = [
     errors: [
       { wrong: "登緑", right: "登録" }
     ]
+  },
+  //*****サッカー*****
+  {
+    id: "soccer_ok_01",
+    image: "images/soccer_ok_01.png",
+    correct: true
+  },
+  {
+    id: "soccer_ng_01",
+    image: "images/soccer_ng_01.png",
+    correct: false,
+    errors: [
+      { wrong: "体みの日", right: "休みの日" }
+    ]
+  }, 
+  {
+    id: "soccer_ng_02",
+    image: "images/soccer_ng_02.png",
+    correct: false,
+    errors: [
+      { wrong: "大くの", right: "多くの" }
+    ]
+  },
+    {
+    id: "soccer_ng_03",
+    image: "images/soccer_ng_03.png",
+    correct: false,
+    errors: [
+      { wrong: "無科", right: "無料" }
+    ]
+  },
+    {
+    id: "soccer_ng_04",
+    image: "images/soccer_ng_04.png",
+    correct: false,
+    errors: [
+      { wrong: "ﾛｶ", right: "ｶﾛ" }
+    ]
   }
-
+  
   // 文字だけのポスターも追加できます（画像は不要）
   // ,{
   //   id: "text_ng_01",
