@@ -14,7 +14,6 @@ const POSTERS = [
     image: "posters/golf_ng_01.jpg",
     correct: false,
     errors: [
-      { wrong: "登緑", right: "登録" },
       { wrong: "お問い会わせ", right: "お問い合わせ" }
     ]
   },
