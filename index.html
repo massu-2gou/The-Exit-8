@@ -160,13 +160,13 @@ footer button:active{transform:scale(.97)}
 
   function buildPoster(p, target){
     target.innerHTML = "";
-    if (p.image){
+    if (p.poster){
       var img = new Image();
       img.alt = "ポスター";
       img.onerror = function(){
-        target.innerHTML = '<div class="missing">画像が見つかりません<br>' + p.image + '</div>';
+        target.innerHTML = '<div class="missing">画像が見つかりません<br>' + p.poster + '</div>';
       };
-      img.src = p.image;
+      img.src = p.poster;
       target.appendChild(img);
     } else {
       var d = document.createElement("div");
