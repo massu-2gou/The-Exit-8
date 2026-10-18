@@ -111,7 +111,6 @@ const POSTERS = [
       { wrong: "感心がある", right: "関心がある" }
     ]
   },
-  
     {
     id: "pet_ng_06",
     image: "images/pet_ng_06.png",
@@ -120,7 +119,22 @@ const POSTERS = [
       { wrong: "「械」の右上に点がない", right: "機械" }
     ]
   },
-  
+    {
+    id: "pet_ng_07",
+    image: "images/pet_ng_07.png",
+    correct: false,
+    errors: [
+      { wrong: "「印」の右側", right: "印象" }
+    ]
+  },
+    {
+    id: "pet_ng_08",
+    image: "images/pet_ng_08.png",
+    correct: false,
+    errors: [
+      { wrong: "「固」の中は吉ではない", right: "固い" }
+    ]
+  }
   // 文字だけのポスターも追加できます（画像は不要）
   // ,{
   //   id: "text_ng_01",
