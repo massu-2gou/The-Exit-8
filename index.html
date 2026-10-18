@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>漢字8番出口</title>
+<style>
+:root{
+  --wall:#e9e6dc; --tile:#d3cfc1; --floor:#9c978a; --bar:#cfcabb; --bar-edge:#b5af9e;
+  --sign:#f2c230; --ink:#222;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+  background:#1d1d1d;color:var(--ink);overflow:hidden;
+  -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;
+}
+#app{height:100vh;height:100dvh;display:flex;flex-direction:column;max-width:1000px;margin:0 auto;background:var(--wall);position:relative}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:var(--bar);border-bottom:4px solid var(--bar-edge)}
+.sign{background:var(--sign);font-weight:700;font-size:clamp(18px,3.5vw,26px);padding:6px 16px;border-radius:4px;letter-spacing:.08em;white-space:nowrap}
+.sign .num{font-size:1.35em;margin-left:4px}
+.rule{font-size:clamp(12px,2.4vw,16px);color:#4a4a4a;text-align:right;line-height:1.5}
+#scene{
+  flex:1;min-height:0;position:relative;display:flex;align-items:center;justify-content:center;
+  background-image:linear-gradient(var(--tile) 1px,transparent 1px),linear-gradient(90deg,var(--tile) 1px,transparent 1px);
+  background-size:56px 28px;
+}
+#scene::after{content:"";position:absolute;left:0;right:0;bottom:0;height:14%;background:var(--floor)}
+.frame{
+  position:relative;z-index:1;background:#fff;border:8px solid #4d4d4d;border-radius:4px;
+  box-shadow:0 8px 0 rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;
+  overflow:hidden;cursor:zoom-in
+}
+.frame img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none}
+.text-poster{padding:8%;text-align:center;font-family:"UD Digi Kyokasho N-R","UD デジタル 教科書体 N-R","BIZ UDPGothic",sans-serif;font-weight:700;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.missing{padding:10%;text-align:center;color:#a33;font-size:14px;line-height:1.6;word-break:break-all}
+.zoom-hint{position:absolute;right:6px;bottom:6px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;padding:3px 8px;border-radius:4px}
+footer{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px 14px;background:var(--bar);border-top:4px solid var(--bar-edge)}
+footer button{height:clamp(56px,11vh,84px);font-size:clamp(18px,3.6vw,26px);font-weight:700;border:none;border-radius:12px;cursor:pointer;font-family:inherit;color:#fff;touch-action:manipulation}
+footer button:active{transform:scale(.97)}
+#btn-back{background:#56698c}
+#btn-forward{background:#2e8a58}
+
+.overlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:10;padding:16px}
+.overlay.show{display:flex}
+.dim{background:rgba(0,0,0,.6)}
+.card{background:#fff;border-radius:16px;padding:28px 24px;max-width:520px;width:100%;text-align:center;line-height:1.7}
+.card h1{font-size:clamp(26px,5vw,36px);margin-bottom:12px}
+.card h2{font-size:clamp(22px,4.5vw,30px);margin-bottom:10px}
+.card p{font-size:clamp(15px,3vw,18px);margin-bottom:10px}
+.card ul{text-align:left;font-size:clamp(15px,3vw,18px);margin:8px auto 18px;padding-left:1.4em;max-width:400px}
+.card button{margin-top:10px;font-family:inherit;font-size:20px;font-weight:700;padding:14px 28px;border:none;border-radius:12px;background:#2e8a58;color:#fff;cursor:pointer}
+.compare{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin:10px 0;font-size:clamp(20px,4.4vw,30px);font-weight:700;font-family:"UD Digi Kyokasho N-R","UD デジタル 教科書体 N-R","BIZ UDPGothic",sans-serif}
+.compare .ng{color:#b33636}
+.compare .ok{color:#237a4a}
+.compare .mark{font-size:.7em;margin-right:4px}
+.compare .ng,.compare .ok{white-space:nowrap}
+.compare .arrow{color:#444;margin-left:12px}
+#fade{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .35s;z-index:5}
+#fade.on{opacity:1}
+#zoom{background:rgba(0,0,0,.9);overflow:auto;align-items:flex-start;padding:0}
+#zoom .zoom-inner{width:100%;min-height:100%;display:flex;flex-direction:column;align-items:center}
+#zoom img{width:100%;max-width:1000px;display:block}
+#zoom .text-poster{background:#fff;width:100%;max-width:700px;margin:40px 16px;font-size:clamp(28px,7vw,56px)}
+#zoom-close{position:sticky;top:0;align-self:stretch;font-family:inherit;font-size:18px;font-weight:700;padding:14px;border:none;background:#333;color:#fff;cursor:pointer;z-index:1}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="sign">出口<span class="num" id="exit-num">0</span></div>
+    <div class="rule" id="rule">まちがいがあれば 引き返す<br>なければ 進む</div>
+  </header>
+
+  <div id="scene">
+    <div class="frame" id="frame" aria-label="ポスター（タップで大きく表示）"></div>
+  </div>
+
+  <footer>
+    <button id="btn-back">← 引き返す</button>
+    <button id="btn-forward">進む →</button>
+  </footer>
+
+  <div id="fade"></div>
+
+  <div class="overlay dim show" id="title">
+    <div class="card">
+      <h1>漢字8番出口</h1>
+      <p>ろうかのポスターをよく見て、出口をめざそう。</p>
+      <ul>
+        <li>ポスターの漢字に<b>まちがいがあれば</b>「引き返す」</li>
+        <li><b>まちがいがなければ</b>「進む」</li>
+        <li>まちがえると0番出口にもどる</li>
+        <li>8回つづけて正解すると、8番出口にとうちゃく</li>
+        <li>ポスターをタップすると大きく見られる</li>
+      </ul>
+      <button id="btn-start">はじめる</button>
+    </div>
+  </div>
+
+  <div class="overlay dim" id="result">
+    <div class="card">
+      <h2 id="result-title"></h2>
+      <p id="result-text"></p>
+      <div id="result-compare"></div>
+      <button id="btn-retry">0番出口からやりなおす</button>
+    </div>
+  </div>
+
+  <div class="overlay dim" id="toast">
+    <div class="card">
+      <h2>せいかい！</h2>
+      <p>まちがいを見つけたね。</p>
+      <div id="toast-compare"></div>
+    </div>
+  </div>
+
+  <div class="overlay dim" id="clear">
+    <div class="card">
+      <h1>8番出口に とうちゃく！</h1>
+      <p>8回つづけて正解しました。</p>
+      <button id="btn-again">もう一度あそぶ</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="zoom">
+    <div class="zoom-inner">
+      <button id="zoom-close">とじる</button>
+      <div id="zoom-body"></div>
+    </div>
+  </div>
+</div>
+
+<script src="questions.js"></script>
+<script>
+(function(){
+  var rate = (typeof OK_RATE === "number") ? OK_RATE : 0.5;
+  var goal = (typeof GOAL === "number") ? GOAL : 8;
+  var okList = POSTERS.filter(function(p){ return p.correct; });
+  var ngList = POSTERS.filter(function(p){ return !p.correct; });
+
+  var exitNum = 0, current = null, lastId = null, busy = true;
+
+  var $ = function(id){ return document.getElementById(id); };
+  var frame = $("frame"), scene = $("scene"), fade = $("fade");
+
+  function pickFrom(list){
+    var pool = list.length > 1 ? list.filter(function(p){ return p.id !== lastId; }) : list;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+  function pick(){
+    var useOk = Math.random() < rate;
+    if (!okList.length) useOk = false;
+    if (!ngList.length) useOk = true;
+    var p = pickFrom(useOk ? okList : ngList);
+    lastId = p.id;
+    return p;
+  }
+
+  function buildPoster(p, target){
+    target.innerHTML = "";
+    if (p.image){
+      var img = new Image();
+      img.alt = "ポスター";
+      img.onerror = function(){
+        target.innerHTML = '<div class="missing">画像が見つかりません<br>' + p.image + '</div>';
+      };
+      img.src = p.image;
+      target.appendChild(img);
+    } else {
+      var d = document.createElement("div");
+      d.className = "text-poster";
+      d.textContent = p.text;
+      target.appendChild(d);
+    }
+  }
+
+  function fit(){
+    var r = scene.getBoundingClientRect();
+    var h = r.height - 40, w = r.width - 40;
+    var ph = h, pw = ph / 1.414;
+    if (pw > w){ pw = w; ph = pw * 1.414; }
+    frame.style.width = Math.max(pw, 50) + "px";
+    frame.style.height = Math.max(ph, 70) + "px";
+    var tp = frame.querySelector(".text-poster");
+    if (tp) tp.style.fontSize = Math.round(pw * 0.09) + "px";
+  }
+
+  function render(){
+    $("exit-num").textContent = exitNum;
+    $("rule").style.visibility = exitNum === 0 ? "visible" : "hidden";
+    buildPoster(current, frame);
+    var hint = document.createElement("div");
+    hint.className = "zoom-hint";
+    hint.textContent = "タップで大きく";
+    frame.appendChild(hint);
+    fit();
+  }
+
+  function transition(after){
+    fade.classList.add("on");
+    setTimeout(function(){
+      after();
+      fade.classList.remove("on");
+      setTimeout(function(){ busy = false; }, 350);
+    }, 380);
+  }
+
+  function next(){
+    current = pick();
+    render();
+  }
+
+  function errorsOf(p){
+    if (p.errors && p.errors.length) return p.errors;
+    if (p.wrong) return [{ wrong: p.wrong, right: p.right }];
+    return [];
+  }
+  function compareHtml(p){
+    return errorsOf(p).map(function(e){
+      return '<div class="compare">' +
+        '<span class="ng"><span class="mark">✕</span>' + esc(e.wrong) + '<span class="arrow">→</span></span>' +
+        '<span class="ok"><span class="mark">○</span>' + esc(e.right) + '</span></div>';
+    }).join("");
+  }
+  function esc(s){
+    return String(s || "").replace(/[&<>"]/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];
+    });
+  }
+
+  function answer(goForward){
+    if (busy || !current) return;
+    busy = true;
+    var right = (goForward === current.correct);
+
+    if (right){
+      exitNum++;
+      var proceed = function(){
+        if (exitNum >= goal){
+          transition(function(){
+            $("exit-num").textContent = exitNum;
+            $("clear").classList.add("show");
+            busy = true;
+          });
+        } else {
+          transition(next);
+        }
+      };
+      if (!current.correct && errorsOf(current).length){
+        $("toast-compare").innerHTML = compareHtml(current);
+        $("toast").classList.add("show");
+        setTimeout(function(){
+          $("toast").classList.remove("show");
+          proceed();
+        }, 2200);
+      } else {
+        proceed();
+      }
+    } else {
+      if (current.correct){
+        $("result-title").textContent = "ざんねん…";
+        $("result-text").textContent = "このポスターに まちがいは ありませんでした。";
+        $("result-compare").innerHTML = "";
+      } else {
+        $("result-title").textContent = "ざんねん…";
+        $("result-text").textContent = "このポスターには まちがいが ありました。";
+        $("result-compare").innerHTML = compareHtml(current);
+      }
+      $("result").classList.add("show");
+    }
+  }
+
+  function restart(){
+    $("result").classList.remove("show");
+    $("clear").classList.remove("show");
+    busy = true;
+    exitNum = 0;
+    transition(next);
+  }
+
+  function openZoom(){
+    if (!current) return;
+    buildPoster(current, $("zoom-body"));
+    $("zoom").classList.add("show");
+    $("zoom").scrollTop = 0;
+  }
+  function closeZoom(){ $("zoom").classList.remove("show"); }
+
+  $("btn-start").addEventListener("click", function(){
+    $("title").classList.remove("show");
+    busy = false;
+  });
+  $("btn-back").addEventListener("click", function(){ answer(false); });
+  $("btn-forward").addEventListener("click", function(){ answer(true); });
+  $("btn-retry").addEventListener("click", restart);
+  $("btn-again").addEventListener("click", restart);
+  frame.addEventListener("click", openZoom);
+  $("zoom-close").addEventListener("click", closeZoom);
+
+  document.addEventListener("keydown", function(e){
+    if ($("zoom").classList.contains("show")){
+      if (e.key === "Escape") closeZoom();
+      return;
+    }
+    if (e.key === "ArrowRight" || e.key === "ArrowUp") { e.preventDefault(); answer(true); }
+    if (e.key === "ArrowLeft" || e.key === "ArrowDown") { e.preventDefault(); answer(false); }
+  });
+
+  window.addEventListener("resize", fit);
+
+  current = pick();
+  render();
+})();
+</script>
+</body>
+</html>
