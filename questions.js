@@ -75,12 +75,12 @@ const POSTERS = [
     //*****ペットショップ*****
   {
     id: "pet_ok_01",
-    image: "images/pet_ok_01.png",
+    image: "images/pet_ok_01.jpg",
     correct: true
   },
   {
     id: "pet_ng_01",
-    image: "images/pet_ng_01.png",
+    image: "images/pet_ng_01.jpg",
     correct: false,
     errors: [
       { wrong: "回転", right: "開店" }
@@ -88,7 +88,7 @@ const POSTERS = [
   }, 
   {
     id: "pet_ng_02",
-    image: "images/pet_ng_02.png",
+    image: "images/pet_ng_02.jpg",
     correct: false,
     errors: [
       { wrong: "短かい", right: "短い" }
@@ -96,7 +96,7 @@ const POSTERS = [
   },
     {
     id: "pet_ng_03",
-    image: "images/pet_ng_03.png",
+    image: "images/pet_ng_03.jpg",
     correct: false,
     errors: [
       { wrong: "「初」の部首", right: "初回" }
@@ -104,7 +104,7 @@ const POSTERS = [
   },
     {
     id: "pet_ng_04",
-    image: "images/pet_ng_04.png",
+    image: "images/pet_ng_04.jpg",
     correct: false,
     errors: [
       { wrong: "「達」の書き方", right: "ワンちゃん達" }
@@ -112,7 +112,7 @@ const POSTERS = [
   },
     {
     id: "pet_ng_05",
-    image: "images/pet_ng_05.png",
+    image: "images/pet_ng_05.jpg",
     correct: false,
     errors: [
       { wrong: "感心がある", right: "関心がある" }
@@ -120,7 +120,7 @@ const POSTERS = [
   },
     {
     id: "pet_ng_06",
-    image: "images/pet_ng_06.png",
+    image: "images/pet_ng_06.jpg",
     correct: false,
     errors: [
       { wrong: "「械」の右上に点がない", right: "機械" }
@@ -128,7 +128,7 @@ const POSTERS = [
   },
     {
     id: "pet_ng_07",
-    image: "images/pet_ng_07.png",
+    image: "images/pet_ng_07.jpg",
     correct: false,
     errors: [
       { wrong: "「印」の右側", right: "印象" }
@@ -136,7 +136,7 @@ const POSTERS = [
   },
     {
     id: "pet_ng_08",
-    image: "images/pet_ng_08.png",
+    image: "images/pet_ng_08.jpg",
     correct: false,
     errors: [
       { wrong: "「固」の中は吉ではない", right: "固い" }
