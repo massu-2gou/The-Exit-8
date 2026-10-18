@@ -6,12 +6,12 @@
 const POSTERS = [
   {
     id: "golf_ok_01",
-    image: "images/golf_ok_01.jpg",
+    image: "posters/golf_ok_01.jpg",
     correct: true
   },
   {
     id: "golf_ng_01",
-    image: "images/golf_ng_01.jpg",
+    image: "posters/golf_ng_01.jpg",
     correct: false,
     errors: [
       { wrong: "登緑", right: "登録" },
@@ -20,7 +20,7 @@ const POSTERS = [
   },
   {
     id: "golf_ng_02",
-    image: "images/golf_ng_02.jpg",
+    image: "posters/golf_ng_02.jpg",
     correct: false,
     errors: [
       { wrong: "登緑", right: "登録" }
