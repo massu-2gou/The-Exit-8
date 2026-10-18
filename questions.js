@@ -27,6 +27,14 @@ const POSTERS = [
       { wrong: "登緑", right: "登録" }
     ]
   },
+  {
+    id: "golf_ng_03",
+    image: "images/golf_ng_03.png",
+    correct: false,
+    errors: [
+      { wrong: "薬しもう", right: "楽しもう" }
+    ]
+  },
   //*****サッカー*****
   {
     id: "soccer_ok_01",
