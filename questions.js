@@ -188,6 +188,85 @@ const POSTERS = [
     errors: [
       { wrong: "「通」がつきぬけていない", right: "大通り" }
     ]
+  },
+
+  //*****ごみ*****
+  {
+    id: "garbage_ok_01",
+    image: "images/garbage_ok_01.jpg",
+    correct: true
+  },
+  {
+    id: "garbage_ng_01",
+    image: "images/garbage_ng_01.jpg",
+    correct: false,
+    errors: [
+      { wrong: "拾てて", right: "捨てて" }
+    ]
+  },
+  {
+    id: "garbage_ng_02",
+    image: "images/garbage_ng_02.jpg",
+    correct: false,
+    errors: [
+      { wrong: "士曜日", right: "土曜日" }
+    ]
+  },
+  {
+    id: "garbage_ng_03",
+    image: "images/garbage_ng_03.jpg",
+    correct: false,
+    errors: [
+      { wrong: "意外", right: "以外" }
+    ]
+  },
+  {
+    id: "garbage_ng_04",
+    image: "images/garbage_ng_04.jpg",
+    correct: false,
+    errors: [
+      { wrong: "末来", right: "未来" }
+    ]
+  },
+  {
+    id: "garbage_ng_05",
+    image: "images/garbage_ng_05.jpg",
+    correct: false,
+    errors: [
+      { wrong: "羊透明", right: "半透明" }
+    ]
+  },
+  {
+    id: "garbage_ng_06",
+    image: "images/garbage_ng_06.jpg",
+    correct: false,
+    errors: [
+      { wrong: "「朝」の左が「車」になっている", right: "朝" }
+    ]
+  },
+  {
+    id: "garbage_ng_07",
+    image: "images/garbage_ng_07.jpg",
+    correct: false,
+    errors: [
+      { wrong: "「然」の形", right: "自然" }
+    ]
+  },
+  {
+    id: "garbage_ng_08",
+    image: "images/garbage_ng_08.jpg",
+    correct: false,
+    errors: [
+      { wrong: "「協」の「力」がはねていない", right: "協力" }
+    ]
+  },
+  {
+    id: "garbage_ng_09",
+    image: "images/garbage_ng_09.jpg",
+    correct: false,
+    errors: [
+      { wrong: "「置」の形", right: "放置" }
+    ]
   }
   // 文字だけのポスターも追加できます（画像は不要）
   // ,{
