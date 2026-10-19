@@ -59,7 +59,10 @@ footer button:active{transform:scale(.97)}
 .compare .arrow{color:#444;margin-left:12px}
 #fade{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .35s;z-index:5}
 #fade.on{opacity:1}
-#zoom{background:rgba(0,0,0,.9);overflow:auto;align-items:flex-start;padding:0}
+.btn-row{display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:6px}
+.btn-row button{margin-top:0;width:100%;max-width:340px;padding:14px 12px;font-size:clamp(16px,4.6vw,20px);white-space:nowrap}
+.card button.sub{background:#fff;color:#2e5e8a;border:3px solid #56698c}
+#zoom{z-index:20;background:rgba(0,0,0,.9);overflow:auto;align-items:flex-start;padding:0}
 #zoom .zoom-inner{width:100%;min-height:100%;display:flex;flex-direction:column;align-items:center}
 #zoom img{width:100%;max-width:1000px;display:block}
 #zoom .text-poster{background:#fff;width:100%;max-width:700px;margin:40px 16px;font-size:clamp(28px,7vw,56px)}
@@ -104,7 +107,10 @@ footer button:active{transform:scale(.97)}
       <h2 id="result-title"></h2>
       <p id="result-text"></p>
       <div id="result-compare"></div>
-      <button id="btn-retry">0番出口からやりなおす</button>
+      <div class="btn-row">
+        <button id="btn-review" class="sub">さっきのポスターを確認する</button>
+        <button id="btn-retry">0番出口からやりなおす</button>
+      </div>
     </div>
   </div>
 
@@ -295,6 +301,7 @@ footer button:active{transform:scale(.97)}
   $("btn-back").addEventListener("click", function(){ answer(false); });
   $("btn-forward").addEventListener("click", function(){ answer(true); });
   $("btn-retry").addEventListener("click", restart);
+  $("btn-review").addEventListener("click", openZoom);
   $("btn-again").addEventListener("click", restart);
   frame.addEventListener("click", openZoom);
   $("zoom-close").addEventListener("click", closeZoom);
