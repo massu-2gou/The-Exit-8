@@ -170,7 +170,7 @@ const POSTERS = [
     id: "text_ng_01",
     text: "自然を守る。",
     correct: true
-  },
+  }
   // 文字だけのポスターも追加できます（画像は不要）
   // ,{
   //   id: "text_ng_01",
