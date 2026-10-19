@@ -165,11 +165,29 @@ const POSTERS = [
       { wrong: "出登", right: "出発" }
     ]
   },
-  
   {
-    id: "text_ok_01",
-    text: "自然を守る。",
-    correct: true
+    id: "fes_ng_03",
+    image: "images/fes_ng_03.jpg",
+    correct: false,
+    errors: [
+      { wrong: "「博」の右上の点がない", right: "博物館" }
+    ]
+  },
+    {
+    id: "fes_ng_04",
+    image: "images/fes_ng_04.jpg",
+    correct: false,
+    errors: [
+      { wrong: "「飛」がつきぬけていない", right: "飛ばす" }
+    ]
+  }, 
+  {
+    id: "fes_ng_05",
+    image: "images/fes_ng_05.jpg",
+    correct: false,
+    errors: [
+      { wrong: "「通」がつきぬけていない", right: "大通り" }
+    ]
   }
   // 文字だけのポスターも追加できます（画像は不要）
   // ,{
