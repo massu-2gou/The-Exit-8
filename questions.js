@@ -141,7 +141,36 @@ const POSTERS = [
     errors: [
       { wrong: "「固」の中は吉ではない", right: "固い" }
     ]
-  }
+  },
+
+    //*****お祭り*****
+  {
+    id: "fes_ok_01",
+    image: "images/fes_ok_01.jpg",
+    correct: true
+  },
+  {
+    id: "fes_ng_01",
+    image: "images/fes_ng_01.jpg",
+    correct: false,
+    errors: [
+      { wrong: "厚さ", right: "暑さ" }
+    ]
+  }, 
+  {
+    id: "fes_ng_02",
+    image: "images/fes_ng_02.jpg",
+    correct: false,
+    errors: [
+      { wrong: "出登", right: "出発" }
+    ]
+  },
+  
+  {
+    id: "text_ng_01",
+    text: "自然を守る。",
+    correct: true
+  },
   // 文字だけのポスターも追加できます（画像は不要）
   // ,{
   //   id: "text_ng_01",
