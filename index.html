@@ -146,21 +146,31 @@ footer button:active{transform:scale(.97)}
   var okList = POSTERS.filter(function(p){ return p.correct; });
   var ngList = POSTERS.filter(function(p){ return !p.correct; });
 
-  var exitNum = 0, current = null, lastId = null, busy = true;
+  var exitNum = 0, current = null, lastId = null, lastKind = null, busy = true;
 
   var $ = function(id){ return document.getElementById(id); };
   var frame = $("frame"), scene = $("scene"), fade = $("fade");
 
+  // ポスターの種類（id の先頭、例: "golf_ng_01" → "golf"）
+  function kindOf(p){
+    if (p.kind) return p.kind;
+    var m = String(p.id).match(/^(.*?)_(ok|ng)_/);
+    return m ? m[1] : String(p.id);
+  }
   function pickFrom(list){
-    var pool = list.length > 1 ? list.filter(function(p){ return p.id !== lastId; }) : list;
+    var pool = list.filter(function(p){ return kindOf(p) !== lastKind && p.id !== lastId; });
+    if (!pool.length) pool = list.filter(function(p){ return p.id !== lastId; });
+    if (!pool.length) pool = list;
     return pool[Math.floor(Math.random() * pool.length)];
   }
   function pick(){
     var useOk = Math.random() < rate;
     if (!okList.length) useOk = false;
     if (!ngList.length) useOk = true;
-    var p = pickFrom(useOk ? okList : ngList);
+    var list = useOk ? okList : ngList;
+    var p = pickFrom(list);
     lastId = p.id;
+    lastKind = kindOf(p);
     return p;
   }
 
