@@ -7,12 +7,12 @@ const POSTERS = [
   //*****ゴルフ*****
   {
     id: "golf_ok_01",
-    image: "images/golf_ok_01.png",
+    image: "images/golf_ok_01.jpg",
     correct: true
   },
   {
     id: "golf_ng_01",
-    image: "images/golf_ng_01.png",
+    image: "images/golf_ng_01.jpg",
     correct: false,
     errors: [
       { wrong: "お問い会わせ", right: "お問い合わせ" }
@@ -20,7 +20,7 @@ const POSTERS = [
   },
   {
     id: "golf_ng_02",
-    image: "images/golf_ng_02.png",
+    image: "images/golf_ng_02.jpg",
     correct: false,
     errors: [
       { wrong: "登緑", right: "登録" }
@@ -28,7 +28,7 @@ const POSTERS = [
   },
   {
     id: "golf_ng_03",
-    image: "images/golf_ng_03.png",
+    image: "images/golf_ng_03.jpg",
     correct: false,
     errors: [
       { wrong: "薬しもう", right: "楽しもう" }
@@ -37,12 +37,12 @@ const POSTERS = [
   //*****サッカー*****
   {
     id: "soccer_ok_01",
-    image: "images/soccer_ok_01.png",
+    image: "images/soccer_ok_01.jpg",
     correct: true
   },
   {
     id: "soccer_ng_01",
-    image: "images/soccer_ng_01.png",
+    image: "images/soccer_ng_01.jpg",
     correct: false,
     errors: [
       { wrong: "体みの日", right: "休みの日" }
@@ -50,7 +50,7 @@ const POSTERS = [
   }, 
   {
     id: "soccer_ng_02",
-    image: "images/soccer_ng_02.png",
+    image: "images/soccer_ng_02.jpg",
     correct: false,
     errors: [
       { wrong: "大くの", right: "多くの" }
@@ -58,7 +58,7 @@ const POSTERS = [
   },
     {
     id: "soccer_ng_03",
-    image: "images/soccer_ng_03.png",
+    image: "images/soccer_ng_03.jpg",
     correct: false,
     errors: [
       { wrong: "無科", right: "無料" }
@@ -66,10 +66,10 @@ const POSTERS = [
   },
     {
     id: "soccer_ng_04",
-    image: "images/soccer_ng_04.png",
+    image: "images/soccer_ng_04.jpg",
     correct: false,
     errors: [
-      { wrong: "ﾛｶ", right: "ｶﾛ" }
+      { wrong: "「加」の左右が逆", right: "参加" }
     ]
   },
     //*****ペットショップ*****
@@ -167,7 +167,7 @@ const POSTERS = [
   },
   
   {
-    id: "text_ng_01",
+    id: "text_ok_01",
     text: "自然を守る。",
     correct: true
   }
