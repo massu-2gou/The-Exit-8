@@ -267,6 +267,77 @@ const POSTERS = [
     errors: [
       { wrong: "「置」の形", right: "放置" }
     ]
+  },
+
+  //*****地図*****
+  {
+    id: "map_ok_01",
+    image: "images/map_ok_01.jpg",
+    correct: true
+  },
+  {
+    id: "map_ng_01",
+    image: "images/map_ng_01.jpg",
+    correct: false,
+    errors: [
+      { wrong: "大坂", right: "大阪" }
+    ]
+  },
+  {
+    id: "map_ng_02",
+    image: "images/map_ng_02.jpg",
+    correct: false,
+    errors: [
+      { wrong: "鳥根", right: "島根" }
+    ]
+  },
+  {
+    id: "map_ng_03",
+    image: "images/map_ng_03.jpg",
+    correct: false,
+    errors: [
+      { wrong: "宮木", right: "宮城" }
+    ]
+  },
+  {
+    id: "map_ng_04",
+    image: "images/map_ng_04.jpg",
+    correct: false,
+    errors: [
+      { wrong: "取鳥", right: "鳥取" }
+    ]
+  },
+  {
+    id: "map_ng_05",
+    image: "images/map_ng_05.jpg",
+    correct: false,
+    errors: [
+      { wrong: "鹿子島", right: "鹿児島" }
+    ]
+  },
+  {
+    id: "map_ng_06",
+    image: "images/map_ng_06.jpg",
+    correct: false,
+    errors: [
+      { wrong: "崎玉", right: "埼玉" }
+    ]
+  },
+  {
+    id: "map_ng_07",
+    image: "images/map_ng_07.jpg",
+    correct: false,
+    errors: [
+      { wrong: "郡馬", right: "群馬" }
+    ]
+  },
+  {
+    id: "map_ng_08",
+    image: "images/map_ng_08.jpg",
+    correct: false,
+    errors: [
+      { wrong: "能本", right: "熊本" }
+    ]
   }
   // 文字だけのポスターも追加できます（画像は不要）
   // ,{
