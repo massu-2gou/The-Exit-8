@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>まちがいの場所ツール</title>
+<style>
+:root{--bg:#f3f1ea;--panel:#fff;--ink:#222;--muted:#666;--line:#d8d4c8;--auto:#d33;--keep:#1f9d55;--now:#2f6fd6;--accent:#2e8a58}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+header{padding:16px max(16px,env(safe-area-inset-left,0px));background:#cfcabb;border-bottom:4px solid #b5af9e}
+header h1{font-size:22px}
+header p{font-size:14px;color:#444}
+main{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;padding:16px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
+@media (max-width:760px){main{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+.list{max-height:75vh;overflow:auto}
+.list h3{font-size:14px;color:var(--muted);margin:10px 0 4px}
+.item{display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:none;border:1px solid transparent;border-radius:8px;padding:6px 8px;font:inherit;font-size:14px;cursor:pointer}
+.item:hover{background:#f6f4ee}
+.item.sel{border-color:var(--now);background:#eef4ff}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.dot.has{background:var(--keep)}
+.dot.none{background:var(--auto)}
+.view h2{font-size:18px;margin-bottom:4px}
+.errs{font-size:15px;color:#b33636;margin-bottom:8px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0}
+.controls label{font-size:14px;color:#444;display:flex;align-items:center;gap:6px}
+button.act{font:inherit;font-weight:700;font-size:14px;padding:8px 14px;border-radius:8px;border:2px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.act.sub{background:#fff;color:var(--accent)}
+.stage{position:relative;width:100%;max-width:min(560px,calc((100vh - 60px) * 0.707));margin-top:12px;user-select:none;touch-action:none;cursor:crosshair;border:1px solid var(--line)}
+.stage img{width:100%;display:block;pointer-events:none}
+.box{position:absolute;border:3px solid var(--auto);background:rgba(221,51,51,.12);cursor:pointer}
+.box.on{border-color:var(--keep);background:rgba(31,157,85,.15)}
+.box.draw{border:3px dashed var(--now);background:rgba(47,111,214,.12);pointer-events:none}
+.legend{font-size:13px;color:var(--muted);margin:6px 0}
+.legend b.r{color:var(--auto)} .legend b.g{color:var(--keep)} .legend b.b{color:var(--now)}
+pre{background:#272822;color:#f8f8f2;border-radius:8px;padding:10px 12px;font-size:13px;white-space:pre-wrap;word-break:break-all;margin-top:8px}
+.msg{font-size:14px;margin-top:6px;min-height:1.4em}
+.warn{background:#fff4e3;border:1px solid #e08a1e;border-radius:8px;padding:10px 12px;font-size:14px;margin-bottom:12px}
+.warn[hidden]{display:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>まちがいの場所ツール</h1>
+  <p>まちがいのあるポスターを、同じ種類の正しいポスター（<code>種類_ok_01</code>）と見比べて、まちがいの場所を自動で見つけます。見つけた場所を <code>questions.js</code> にはりつけると、児童がその場所をタップして答えられるようになります。</p>
+</header>
+<main>
+  <div class="panel list" id="list"></div>
+  <div class="panel view">
+    <div class="warn" id="warn" hidden></div>
+    <h2 id="v-title">左の一覧からポスターをえらんでください</h2>
+    <div class="errs" id="v-errs"></div>
+    <div class="controls">
+      <label>見つけやすさ <input type="range" id="th" min="15" max="90" step="5" value="40"> <span id="th-v">40</span></label>
+      <button class="act sub" id="redo">もう一度さがす</button>
+      <button class="act sub" id="clearsel">えらんだ場所をすべて外す</button>
+    </div>
+    <p class="legend"><b class="r">赤</b>＝見つかった場所（タップでえらぶ）　<b class="g">緑</b>＝えらんだ場所　画像の上をなぞると、自分で場所を<b class="b">かこめます</b></p>
+    <p class="msg" id="msg"></p>
+    <div class="controls">
+      <button class="act" id="copy">コピーする</button>
+      <span style="font-size:13px;color:#666">questions.js の、このポスターの <code>correct: false,</code> の下にはりつけます（前の spots は消してください）</span>
+    </div>
+    <pre id="out">spots: [],</pre>
+    <div class="stage" id="stage"></div>
+  </div>
+</main>
+<script src="../questions.js"></script>
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  function kindOf(p){ var m = String(p.id).match(/^(.*?)_(ok|ng)_/); return m ? m[1] : String(p.id); }
+  var posters = (typeof POSTERS !== "undefined" ? POSTERS : []).filter(function(p){ return p.image; });
+  var oks = {}; posters.forEach(function(p){ if (p.correct && !oks[kindOf(p)]) oks[kindOf(p)] = p; });
+  var ngs = posters.filter(function(p){ return !p.correct; });
+
+  if (location.protocol === "file:"){
+    $("warn").hidden = false;
+    $("warn").textContent = "このページは、パソコンのファイルを直接開くと自動でさがせません。GitHub Pages の URL の後ろに「/tools/spots.html」をつけて開いてください。（自分でなぞってかこむことはできます）";
+  }
+
+  // 一覧
+  var listEl = $("list"), cur = null, boxes = [], drawn = [];
+  function buildList(){
+    listEl.innerHTML = "";
+    var kinds = [];
+    ngs.forEach(function(p){ if (kinds.indexOf(kindOf(p)) < 0) kinds.push(kindOf(p)); });
+    kinds.forEach(function(k){
+      var h = document.createElement("h3"); h.textContent = k + (oks[k] ? "" : "（正しいポスターがありません）"); listEl.appendChild(h);
+      ngs.filter(function(p){ return kindOf(p) === k; }).forEach(function(p){
+        var b = document.createElement("button"); b.className = "item" + (cur === p ? " sel" : "");
+        var has = p.spots && p.spots.length;
+        b.innerHTML = '<span class="dot ' + (has ? "has" : "none") + '"></span>' + p.id + (has ? "" : "（未設定）");
+        b.onclick = function(){ select(p); };
+        listEl.appendChild(b);
+      });
+    });
+  }
+
+  function loadImg(src){
+    return new Promise(function(res, rej){ var i = new Image(); i.onload = function(){ res(i); }; i.onerror = rej; i.src = "../" + src; });
+  }
+
+  // 自動でさがす：縮小した2枚の画像を見比べ、ちがう部分をまとめて四角にする
+  function detect(okImg, ngImg, th){
+    var W = Math.min(ngImg.naturalWidth, 1600), H = Math.round(ngImg.naturalHeight * W / ngImg.naturalWidth);
+    function gray(img){
+      var c = document.createElement("canvas"); c.width = W; c.height = H;
+      var x = c.getContext("2d"); x.drawImage(img, 0, 0, W, H);
+      var d = x.getImageData(0, 0, W, H).data, g = new Float32Array(W * H);
+      for (var i = 0, j = 0; i < d.length; i += 4, j++) g[j] = d[i] * 0.299 + d[i + 1] * 0.587 + d[i + 2] * 0.114;
+      // 軽くぼかしてノイズを減らす
+      var o = new Float32Array(W * H);
+      for (var y = 1; y < H - 1; y++) for (var x2 = 1; x2 < W - 1; x2++){
+        var k = y * W + x2;
+        o[k] = (g[k] * 4 + g[k - 1] + g[k + 1] + g[k - W] + g[k + W]) / 8;
+      }
+      return o;
+    }
+    var a = gray(okImg), b = gray(ngImg);
+    var C = 8, gw = Math.ceil(W / C), gh = Math.ceil(H / C), cell = new Int32Array(gw * gh);
+    for (var y = 0; y < H; y++) for (var x = 0; x < W; x++){
+      var k = y * W + x;
+      if (Math.abs(a[k] - b[k]) > th) cell[((y / C) | 0) * gw + ((x / C) | 0)]++;
+    }
+    var seen = new Uint8Array(gw * gh), out = [];
+    for (var s = 0; s < gw * gh; s++){
+      if (!cell[s] || seen[s]) continue;
+      var st = [s], x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1, sum = 0; seen[s] = 1;
+      while (st.length){
+        var q = st.pop(), qx = q % gw, qy = (q / gw) | 0;
+        sum += cell[q]; x0 = Math.min(x0, qx); y0 = Math.min(y0, qy); x1 = Math.max(x1, qx); y1 = Math.max(y1, qy);
+        for (var dy = -2; dy <= 2; dy++) for (var dx = -2; dx <= 2; dx++){
+          var nx = qx + dx, ny = qy + dy; if (nx < 0 || ny < 0 || nx >= gw || ny >= gh) continue;
+          var n = ny * gw + nx; if (cell[n] && !seen[n]){ seen[n] = 1; st.push(n); }
+        }
+      }
+      if (sum < 10) continue;
+      out.push({ b: [x0 * C / W, y0 * C / H, (x1 - x0 + 1) * C / W, (y1 - y0 + 1) * C / H], score: sum });
+    }
+    out.sort(function(p, q){ return q.score - p.score; });
+    return out.slice(0, 8);
+  }
+
+  var okImgCache = {};
+  function select(p){
+    cur = p; boxes = []; drawn = [];
+    buildList();
+    $("v-title").textContent = p.id;
+    $("v-errs").textContent = (p.errors || []).map(function(e){ return "✕" + e.wrong + " → ○" + e.right; }).join("　");
+    var stage = $("stage"); stage.innerHTML = "";
+    var img = new Image(); img.src = "../" + p.image; img.draggable = false; stage.appendChild(img);
+    // いま questions.js に書いてある場所
+    (p.spots || []).forEach(function(s){ drawn.push(s.slice()); });
+    run("reset");
+  }
+
+  function run(){
+    if (!cur) return;
+    var th = +$("th").value; $("th-v").textContent = th;
+    if (arguments[0] === "reset"){ th = 40; $("th").value = 40; $("th-v").textContent = 40; }
+    var ok = oks[kindOf(cur)];
+    $("msg").textContent = "さがしています…";
+    if (!ok){ $("msg").textContent = "同じ種類の正しいポスターがないので、自動ではさがせません。なぞってかこんでください。"; render(); return; }
+    Promise.all([loadImg(ok.image), loadImg(cur.image)]).then(function(r){
+      try {
+        var found = detect(r[0], r[1], th), used = th;
+        // 見つからないときは、少しずつ感度を上げてさがし直す
+        while (!found.length && used > 15){ used = Math.max(15, used - 10); found = detect(r[0], r[1], used); }
+        if (used !== th){ $("th").value = used; $("th-v").textContent = used; }
+        boxes = found.map(function(d){ return { b: d.b, on: false }; });
+      } catch(e){
+        boxes = [];
+        $("msg").textContent = "自動でさがせませんでした（GitHub Pages で開いてください）。なぞってかこむことはできます。";
+        render(); return;
+      }
+      if (!drawn.length && boxes.length) boxes[0].on = true;
+      $("msg").textContent = boxes.length ? (boxes.length + "か所 見つかりました。まちがいの場所が緑になっているか たしかめてください。") : "見つかりませんでした。「見つけやすさ」の数字を小さくするか、なぞってかこんでください。";
+      render();
+    }).catch(function(){ $("msg").textContent = "画像を読みこめませんでした。"; render(); });
+  }
+
+  function chosen(){
+    return drawn.concat(boxes.filter(function(x){ return x.on; }).map(function(x){ return x.b; }));
+  }
+  function f4(v){ return (Math.round(v * 10000) / 10000).toFixed(4); }
+  function render(){
+    var stage = $("stage");
+    Array.prototype.slice.call(stage.querySelectorAll(".box")).forEach(function(e){ e.remove(); });
+    function put(b, cls, onclick){
+      var e = document.createElement("div"); e.className = "box " + cls;
+      e.style.left = b[0] * 100 + "%"; e.style.top = b[1] * 100 + "%"; e.style.width = b[2] * 100 + "%"; e.style.height = b[3] * 100 + "%";
+      if (onclick) e.addEventListener("pointerdown", function(ev){ ev.stopPropagation(); onclick(); });
+      stage.appendChild(e);
+    }
+    boxes.forEach(function(x){ put(x.b, x.on ? "on" : "", function(){ x.on = !x.on; render(); }); });
+    drawn.forEach(function(b, i){ put(b, "on", function(){ drawn.splice(i, 1); render(); }); });
+    var c = chosen();
+    $("out").textContent = "spots: [" + c.map(function(b){ return "[" + b.map(f4).join(", ") + "]"; }).join(", ") + "],";
+  }
+
+  // なぞってかこむ
+  (function(){
+    var stage = $("stage"), start = null, ghost = null;
+    function pos(e){ var r = stage.getBoundingClientRect(); return [Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)), Math.min(1, Math.max(0, (e.clientY - r.top) / r.height))]; }
+    stage.addEventListener("pointerdown", function(e){
+      if (!cur) return; start = pos(e); stage.setPointerCapture(e.pointerId);
+      ghost = document.createElement("div"); ghost.className = "box draw"; stage.appendChild(ghost);
+    });
+    stage.addEventListener("pointermove", function(e){
+      if (!start) return; var p = pos(e);
+      var x = Math.min(p[0], start[0]), y = Math.min(p[1], start[1]), w = Math.abs(p[0] - start[0]), h = Math.abs(p[1] - start[1]);
+      ghost.style.left = x * 100 + "%"; ghost.style.top = y * 100 + "%"; ghost.style.width = w * 100 + "%"; ghost.style.height = h * 100 + "%";
+    });
+    stage.addEventListener("pointerup", function(e){
+      if (!start) return; var p = pos(e);
+      var x = Math.min(p[0], start[0]), y = Math.min(p[1], start[1]), w = Math.abs(p[0] - start[0]), h = Math.abs(p[1] - start[1]);
+      start = null; if (ghost) ghost.remove(); ghost = null;
+      if (w > 0.008 && h > 0.006){ drawn.push([x, y, w, h]); render(); }
+    });
+  })();
+
+  $("th").addEventListener("input", function(){ $("th-v").textContent = $("th").value; });
+  $("th").addEventListener("change", run);
+  $("redo").addEventListener("click", run);
+  $("clearsel").addEventListener("click", function(){ drawn = []; boxes.forEach(function(x){ x.on = false; }); render(); });
+  $("copy").addEventListener("click", function(){
+    var t = $("out").textContent;
+    var done = function(){ $("msg").textContent = "コピーしました。questions.js にはりつけてください。"; };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(done, function(){ selectOut(); });
+    } else selectOut();
+  });
+  function selectOut(){
+    var r = document.createRange(); r.selectNodeContents($("out"));
+    var s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    $("msg").textContent = "下の文字がえらばれた状態です。Ctrl + C でコピーしてください。";
+  }
+
+  buildList();
+  var firstMissing = ngs.filter(function(p){ return !(p.spots && p.spots.length); })[0];
+  if (firstMissing) select(firstMissing);
+})();
+</script>
+</body>
+</html>
